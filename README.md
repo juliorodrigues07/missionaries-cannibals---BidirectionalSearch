@@ -3,7 +3,7 @@
 
 # Requisitos
  
-- Python 3.8 a 3.10
+- Python 3.8 ou superior
  
 - Biblioteca NetworkX
  
