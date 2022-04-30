@@ -8,3 +8,7 @@
 - Biblioteca NetworkX
  
        pip install networkx
+
+# Execução
+
+       python3 tp1_IA.py
