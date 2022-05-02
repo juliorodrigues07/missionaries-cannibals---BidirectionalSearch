@@ -1,12 +1,126 @@
 import networkx as nx
+import matplotlib.pyplot as plt
+
+# Estado inicial -> 3 canibais, 3 missionários e o barco no lado esquerdo, e nada no lado esquerdo do rio
+begin = [3, 3, 0, 0, 0]
+
+# Estado final -> Nada no lado esquerdo do rio e 3 canibais, 3 missionários e o barco do lardo direito
+end = [0, 0, 1, 3, 3]
 
 # (nº de canibais, nº de missionários) em cada viagem
 actions = [(0, 1), (0, 2), (1, 0), (2, 0), (1, 1)]
+limit = 2
 
-# Estado inicial -> 3 canibais, 3 missionários e o barco no lado esquedo, e nada no lado direito do rio
-begin = [3, 3, 0, 0, 0]
+# border = list()
+visited = list()
 
-# TODO: Gerar as combinações de estados possíveis
-# TODO: Implementação do método busca (largura ou profundidade)
+
+def move_boat(current_state, n_cannibals, n_missionaries):
+
+    # O número de pessoas no barco não pode ultrapassar 2
+    if n_cannibals + n_missionaries > limit:
+        return
+
+    boat_local = current_state[2]
+
+    # Se o barco está na direta (1), obtém os índices de origem (direita) e destino (esquerda)
+    # dos canibais e missionários no estado atual. Inverte as direções caso contrário (0).
+    if boat_local:
+        o_cannibals = 3
+        o_missionaries = 4
+        d_cannibals = 0
+        d_missionaries = 1
+    else:
+        o_cannibals = 0
+        o_missionaries = 1
+        d_cannibals = 3
+        d_missionaries = 4
+
+    # Caso em que não há canibais, nem missionários para transportar
+    if current_state[o_cannibals] == 0 and current_state[o_missionaries] == 0:
+        return
+
+    check = 0
+
+    # Transfere canibais e missionários de um lado para o outro se possível
+    for i in range(min(n_cannibals, current_state[o_cannibals])):
+        current_state[d_cannibals] += 1
+        current_state[o_cannibals] -= 1
+        check = 1
+
+    for i in range(min(n_missionaries, current_state[o_missionaries])):
+        current_state[d_missionaries] += 1
+        current_state[o_missionaries] -= 1
+        check = 1
+
+    # Altera o lado do rio em que o barco está
+    if check:
+        current_state[2] = 1 - current_state[2]
+
+    return current_state
+
+
+def valid_states(current_state, graph):
+
+    reachable_states = list()
+
+    for (n_cannibals, n_missionaries) in actions:
+
+        # Obtém o próximo estado possível
+        next_state = move_boat(current_state.copy(), n_cannibals, n_missionaries)
+
+        if next_state == None:
+            continue
+
+        # Para casos em que o nº de missionários fique menor que o nº de canibais
+        if (next_state[0] > next_state[1] and next_state[1] > 0) or \
+           (next_state[3] > next_state[4] and next_state[4] > 0):
+            continue
+
+        # Caso em que o estado se repete
+        if next_state in visited:
+            continue
+
+        # O estado válido é adicionado à lista
+        reachable_states.append(next_state)
+        graph.add_node(str(next_state))
+        graph.add_edge(str(current_state), str(next_state))
+
+    return reachable_states, graph
+
+
+def end_test(current_state):
+
+    if current_state[3] == 3 and current_state[4] == 3:
+        return True
+    else:
+        return False
+
+
+#def bidirecional_search(begin, end, graph):
+
 # TODO: Adaptar para busca bidirecional
 # TODO: Plot do grafo e solução
+
+if __name__ == '__main__':
+
+    graph = nx.Graph()
+    graph.add_node(str(begin))
+    visited.append(begin)
+    reachable_states, graph = valid_states(begin, graph.copy())
+
+    # Enquanto o estado solução não é gerado, o grafo é construído combinando os estados válidos possíveis
+    while not end_test(reachable_states[0]):
+
+        # Próximo estado na lista é marcado como visitado
+        next_state = reachable_states[0]
+        visited.append(next_state)
+
+        # Geração dos estados
+        aux, graph = valid_states(next_state, graph.copy())
+        reachable_states += aux
+        reachable_states.pop(0)
+
+    plt.figure(1)
+    nx.draw_networkx(graph, pos = nx.spring_layout(graph), with_labels = True)
+    plt.show()
