@@ -6,8 +6,12 @@
 - Python 3.8 ou superior
  
 - Biblioteca NetworkX
+
+- Biblioteca Matplotlib 
  
        pip install networkx
+       
+       pip install matplotlib
 
 # Execução
 
