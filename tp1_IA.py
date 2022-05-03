@@ -11,8 +11,8 @@ end = [0, 0, 1, 3, 3]
 actions = [(0, 1), (0, 2), (1, 0), (2, 0), (1, 1)]
 limit = 2
 
-# border = list()
 visited = list()
+adjacent = dict()
 
 
 def move_boat(current_state, n_cannibals, n_missionaries):
@@ -64,13 +64,11 @@ def valid_states(current_state, graph):
 
     reachable_states = list()
 
+    # Para cada ação válida
     for (n_cannibals, n_missionaries) in actions:
 
         # Obtém o próximo estado possível
         next_state = move_boat(current_state.copy(), n_cannibals, n_missionaries)
-
-        if next_state == None:
-            continue
 
         # Para casos em que o nº de missionários fique menor que o nº de canibais
         if (next_state[0] > next_state[1] and next_state[1] > 0) or \
@@ -86,6 +84,8 @@ def valid_states(current_state, graph):
         graph.add_node(str(next_state))
         graph.add_edge(str(current_state), str(next_state))
 
+    # Obtém os adjacentes de cada nó (chave) em uma lista (valores)
+    adjacent[str(current_state)] = list(graph[str(current_state)])
     return reachable_states, graph
 
 
@@ -97,9 +97,42 @@ def end_test(current_state):
         return False
 
 
-#def bidirecional_search(begin, end, graph):
+def bidirectional_search():
 
-# TODO: Adaptar para busca bidirecional
+    begin_visited, begin_queue, begin_border = list(), list(), list()
+    end_visited, end_queue, end_border = list(), list(), list()
+
+    begin_visited.append(begin)
+    end_visited.append(end)
+    begin_queue.append(begin)
+    end_queue.append(end)
+
+    # Enquanto há nós para visitar
+    while begin_queue or end_queue:
+
+        begin_node = begin_queue.pop(0)
+        end_node = end_queue.pop(0)
+        begin_border.append(begin_node)
+        end_border.append(end_node)
+
+        # Testa se os caminhos percorridos pelas buscas já se encontraram
+        if begin_node in end_border or end_node in begin_border:
+            break
+
+        # Expansão em largura dos nós adjacentes a partir do estado inicial e final
+        for adj in adjacent[str(begin_node)]:
+            if adj not in begin_visited:
+                begin_visited.append(adj)
+                begin_queue.append(adj)
+
+        for adj in adjacent[str(end_node)]:
+            if adj not in end_visited:
+                end_visited.append(adj)
+                end_queue.append(adj)
+
+    return begin_border + end_border
+
+
 # TODO: Plot do grafo e solução
 
 if __name__ == '__main__':
@@ -120,6 +153,12 @@ if __name__ == '__main__':
         aux, graph = valid_states(next_state, graph.copy())
         reachable_states += aux
         reachable_states.pop(0)
+
+    # Obtém os adjacentes do nó objeetivo
+    adjacent[str(end)] = list(graph[str(end)])
+
+    result = bidirectional_search()
+    print(result)
 
     plt.figure(1)
     nx.draw_networkx(graph, pos = nx.spring_layout(graph), with_labels = True)
