@@ -7,11 +7,15 @@
  
 - Biblioteca NetworkX
 
-- Biblioteca Matplotlib 
+- Biblioteca Matplotlib
+
+- Biblioteca SciPy
  
        pip install networkx
        
        pip install matplotlib
+       
+       pip install scipy
 
 # Execução
 
