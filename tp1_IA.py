@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from collections import OrderedDict
 from queue import Queue
 
+
 # Estado inicial -> 3 canibais, 3 missionários e o barco no lado esquerdo, e nada no lado esquerdo do rio
 begin = [3, 3, 0, 0, 0]
 
@@ -110,7 +111,7 @@ def bidirectional_search():
         begin_border.append(begin_state)
         end_border.append(end_state)
 
-        # Se um dos estados atuais das buscas está na borda da outra árvore, a busca encerra e a solução é encontrada
+        # Se um dos estados atuais das buscas está na borda do outro grafo, a busca encerra e a solução é encontrada
         if begin_state in end_border:
             middle_state = begin_state
             break
@@ -132,7 +133,7 @@ def bidirectional_search():
                 end_queue.put(i)
 
     if middle_state == "":
-        print("Não existe solução! O caminho entre" + str(begin) + "e" + str(end) + "não existe.\n")
+        print("Não existe solução! O caminho entre" + str(begin) + " e " + str(end) + "não existe.\n")
         return
 
     begin_path, end_path = list(), list()
@@ -170,6 +171,7 @@ def print_solution(path):
 
 
 def end_test(current_state):
+
     # Se atinge o estado objetivo
     if current_state[3] == 3 and current_state[4] == 3:
         return True
@@ -177,8 +179,7 @@ def end_test(current_state):
         return False
 
 
-if __name__ == '__main__':
-
+def main():
     # Construção do grafo
     graph = nx.Graph()
     graph.add_node(str(begin))
@@ -187,7 +188,6 @@ if __name__ == '__main__':
 
     # Enquanto o estado solução não é gerado, o grafo é construído combinando os estados válidos possíveis
     while not end_test(reachable_states[0]):
-
         # Próximo estado na lista é marcado como visitado
         next_state = reachable_states[0]
         visited.append(next_state)
@@ -210,8 +210,8 @@ if __name__ == '__main__':
 
     # Executa os plots dos grafos de estados válidos e solução
     plt.figure("Estados válidos")
-    nx.draw_networkx(graph, pos = nx.kamada_kawai_layout(graph),
-                     node_color = 'skyblue', node_shape = "s", linewidths = 19, with_labels = True)
+    nx.draw_networkx(graph, pos=nx.kamada_kawai_layout(graph),
+                     node_color='skyblue', node_shape="s", linewidths=19, with_labels=True)
     plt.show()
 
     color_map = list()
@@ -226,6 +226,10 @@ if __name__ == '__main__':
             color_map.append('green')
 
     plt.figure("Pós-aplicação da busca Bidirecional")
-    nx.draw(graph, pos = nx.kamada_kawai_layout(graph),
-            node_color = color_map, node_shape = "s", linewidths = 19, with_labels = True)
+    nx.draw(graph, pos=nx.kamada_kawai_layout(graph),
+            node_color=color_map, node_shape="s", linewidths=19, with_labels=True)
     plt.show()
+
+
+if __name__ == '__main__':
+    main()
