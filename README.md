@@ -1,5 +1,5 @@
 # TP 1 - IA
- Trabalho Prático 1 (Problema dos Missionários e Canibais) da disciplina de Inteligência Artificial (DCOMP - UFSJ)
+ Trabalho Prático 1 (Problema dos Missionários e Canibais com Busca Bidirecional) da disciplina de Inteligência Artificial (DCOMP - UFSJ)
 
 # Requisitos
  
