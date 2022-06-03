@@ -1,4 +1,4 @@
-# TP 1 - IA
+# Problema dos Missionários e Canibais
 Implementação para resolução do problema dos Missionários e Canibais utilizando busca Bidirecional, busca em Largura e modelagem por grafos para representação do conjunto de estados e ações válidas possíveis (Trabalho Prático 1 da disciplina de Inteligência Artificial - DCOMP - UFSJ).
 
 # Requisitos
